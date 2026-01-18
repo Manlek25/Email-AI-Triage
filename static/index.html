@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Email Triage AI</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Email Triage AI</h1>
+            <p>Envie um email (.txt/.pdf) ou cole o conteúdo para classificar e sugerir resposta.</p>
+        </header>
+
+        <section class="card">
+            <label>Texto do email</label>
+            <textarea id="emailText" placeholder="Cole aqui o conteúdo do email..."></textarea>
+
+            <div class="row">
+                <div class="col">
+                    <label>Upload (.txt/.pdf)</label>
+                    <input id="fileInput" type="file" accept=".txt,.pdf" />
+                </div>
+
+                <div class="col">
+                    <label>Tom da resposta</label>
+                    <select id="tone">
+                        <option value="formal">Formal</option>
+                        <option value="curto">Curto</option>
+                    </select>
+                </div>
+            </div>
+
+            <button id="btnAnalyze">Processar</button>
+            <div id="loading" class="loading hidden">Processando…</div>
+            <div id="error" class="error hidden"></div>
+        </section>
+
+        <section id="result" class="card hidden">
+            <div class="badges">
+                <span id="badgeCategory" class="badge"></span>
+                <span id="badgeConfidence" class="badge secondary"></span>
+                <div id="modeBadge" class="badge warning hidden">
+                    Modo: Heurístico (Fallback)
+                </div>
+            </div>
+
+            <div id="highlightsBox" class="hidden">
+                <h2>Trechos relevantes</h2>
+                <ul id="highlightsList"></ul>
+            </div>
+
+            <h2>Resposta sugerida</h2>
+            <pre id="replyText"></pre>
+
+            <div class="actions">
+                <button id="btnCopy" class="secondary">Copiar resposta</button>
+                <button id="btnClear" class="ghost">Limpar</button>
+            </div>
+
+            <p id="reason" class="muted"></p>
+        </section>
+
+        <footer class="muted">
+            <small>Demo — classificação automática Produtivo/Improdutivo.</small>
+        </footer>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+
+</html>

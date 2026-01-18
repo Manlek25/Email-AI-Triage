@@ -1,0 +1,10 @@
+Assunto: Problema de acesso ao sistema
+
+Boa tarde,
+
+Desde hoje pela manhã não consigo acessar o portal. Ao tentar login, aparece "Credenciais inválidas",
+mesmo após redefinir a senha. Conseguem verificar por favor?
+
+Usuário: joao.silva@empresa.com
+
+Atenciosamente.
