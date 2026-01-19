@@ -15,15 +15,33 @@ def obter_cliente_openai():
     """
     Tenta criar o client da OpenAI.
     Se falhar (sem chave, pacote não instalado, quota, etc), retorna None.
+
+    Suporta:
+    - OPENAI_API_KEY via variável de ambiente
+    - Secret File do Render em /etc/secrets/openai_api_key (fallback)
     """
     global erro_openai
     try:
         from openai import OpenAI
+
         chave_api = os.getenv("OPENAI_API_KEY")
+
+        # 🔒 Render Secret File fallback (garantido)
         if not chave_api:
-            erro_openai = "OPENAI_API_KEY não encontrada no ambiente."
+            try:
+                with open("/etc/secrets/openai_api_key", "r", encoding="utf-8") as f:
+                    chave_api = f.read().strip()
+            except Exception:
+                chave_api = None
+
+        if not chave_api:
+            erro_openai = (
+                "OPENAI_API_KEY não encontrada (nem env var, nem /etc/secrets/openai_api_key)."
+            )
             return None
+
         return OpenAI(api_key=chave_api)
+
     except Exception as excecao:
         print("Erro OpenAI (init):", excecao)
         erro_openai = str(excecao)
@@ -229,11 +247,14 @@ def analisar_email(email_texto_bruto: str, email_texto_limpo: str, tom: str = "f
     # Fallback direto
     if cliente_openai is None:
         resultado = classificar_por_regras(email_texto_bruto)
+        motivo = resultado["reason"]
+        if erro_openai:
+            motivo = f"{motivo} ({erro_openai})"
         return {
             "category": resultado["category"],
             "confidence": resultado["confidence"],
             "reply": gerar_resposta_fallback(resultado["category"], email_texto_bruto, tom),
-            "reason": resultado["reason"],
+            "reason": motivo,
             "highlights": extrair_trechos_relevantes(
                 email_texto_bruto,
                 categoria_sugerida=resultado["category"]
