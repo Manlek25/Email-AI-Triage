@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from app.ai import obter_modelo_openai
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -25,11 +26,20 @@ def pagina_inicial():
 
 @app.get("/health")
 def health_check():
+    secret_path = Path("/etc/secrets/openai_api_key")
+    has_env_key = bool(os.getenv("OPENAI_API_KEY"))
+    has_secret_key = secret_path.exists() and secret_path.stat().st_size > 0
+
     return {
         "status": "ok",
-        "openai_key_present": bool(os.getenv("OPENAI_API_KEY")),
-        "openai_model": os.getenv("OPENAI_MODEL"),
-    }   
+        "openai_configured": (has_env_key or has_secret_key),
+        "openai_model": obter_modelo_openai(),
+        "key_source": (
+            "env"
+            if has_env_key
+            else ("secret_file" if has_secret_key else None)
+        ),
+    }  
 
 
 @app.post("/analyze")

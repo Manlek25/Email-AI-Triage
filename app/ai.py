@@ -18,6 +18,14 @@ if os.path.exists("/etc/secrets/openai_api_key"):
 print("DEBUG: openai version:", getattr(openai, "__version__", "unknown"))
 
 
+def obter_modelo_openai() -> str:
+    """
+    Retorna o modelo OpenAI em uso.
+    Prioridade:
+    1) OPENAI_MODEL (env var)
+    2) default do projeto
+    """
+    return os.getenv("OPENAI_MODEL", "gpt-5-nano")
 
 def obter_cliente_openai():
     """
@@ -278,7 +286,7 @@ EMAIL:
 {email_texto_bruto}
 """.strip()
 
-    modelo = os.getenv("OPENAI_MODEL", "gpt-5-nano")
+    modelo = obter_modelo_openai()
 
     try:
                 # ✅ Tenta usar Responses API (quando disponível no SDK)
