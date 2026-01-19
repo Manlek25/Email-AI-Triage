@@ -45,7 +45,7 @@ def health_check():
 @app.post("/analyze")
 async def analisar(
     texto_email: str = Form(default=""),
-    tom_resposta: str = Form(default="formal"),  # formal | curto
+    tom_resposta: str = Form(default="formal"),  
     arquivo_email: UploadFile | None = File(default=None),
 ):
     texto_bruto = (texto_email or "").strip()

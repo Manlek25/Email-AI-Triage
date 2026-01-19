@@ -2,20 +2,12 @@ import os
 import json
 import re
 from typing import Dict, Any, List, Optional
-import openai
 
 # =========================================================
 # OpenAI client - com fallback automático
 # =========================================================
 
 erro_openai: Optional[str] = None
-#print("Modelo OpenAI em uso:", os.getenv("OPENAI_MODEL"))
-print("DEBUG: OPENAI_API_KEY env presente?", bool(os.getenv("OPENAI_API_KEY")))
-print("DEBUG: existe /etc/secrets/openai_api_key ?", os.path.exists("/etc/secrets/openai_api_key"))
-if os.path.exists("/etc/secrets/openai_api_key"):
-    print("DEBUG: secret file size:", os.path.getsize("/etc/secrets/openai_api_key"))
-
-print("DEBUG: openai version:", getattr(openai, "__version__", "unknown"))
 
 
 def obter_modelo_openai() -> str:
@@ -144,7 +136,7 @@ def extrair_trechos_relevantes(
             vistos.add(linha)
             trechos.append(linha)
 
-    # 1️⃣ Linhas com pedido / pressão / ação
+    # 1° Linhas com pedido / pressão / ação
     sinais_fortes = [
         "status", "prazo", "cobrando", "retorno",
         "erro", "falha", "não consigo", "nao consigo",
@@ -156,7 +148,7 @@ def extrair_trechos_relevantes(
             if len(trechos) >= max_itens:
                 return trechos[:max_itens]
 
-    # 2️⃣ Identificadores importantes
+    # 2° Identificadores importantes
     for linha in linhas:
         linha_lower = linha.lower()
         if linha_lower.startswith("assunto:") or "chamado" in linha_lower or "#" in linha:
@@ -164,14 +156,14 @@ def extrair_trechos_relevantes(
             if len(trechos) >= max_itens:
                 return trechos[:max_itens]
 
-    # 3️⃣ Cortesia (somente se improdutivo)
+    # 3° Cortesia (somente se improdutivo)
     if categoria_sugerida == "Improdutivo":
         for linha in linhas:
             if any(p in linha.lower() for p in PALAVRAS_CORTESIA):
                 adicionar(linha)
                 break
 
-    # 4️⃣ Fallback final
+    # 4° Fallback final
     for linha in linhas:
         adicionar(linha)
         if len(trechos) >= max_itens:
@@ -289,7 +281,7 @@ EMAIL:
     modelo = obter_modelo_openai()
 
     try:
-                # ✅ Tenta usar Responses API (quando disponível no SDK)
+                # Tenta usar Responses API (quando disponível no SDK)
         if modelo.startswith("gpt-5") and hasattr(cliente_openai, "responses"):
             resposta = cliente_openai.responses.create(
                 model=modelo,
@@ -298,11 +290,10 @@ EMAIL:
             conteudo = getattr(resposta, "output_text", "") or ""
 
         else:
-            # ✅ Fallback de compatibilidade (SDK sem responses):
+            # Fallback de compatibilidade (SDK sem responses):
             # usa chat.completions com um modelo compatível
             modelo_chat = modelo
             if modelo_chat.startswith("gpt-5"):
-                # gpt-5* pode não funcionar em chat.completions em SDKs antigos
                 modelo_chat = os.getenv("OPENAI_FALLBACK_CHAT_MODEL", "gpt-4o-mini")
 
             resposta = cliente_openai.chat.completions.create(
