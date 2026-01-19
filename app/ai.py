@@ -11,6 +11,9 @@ erro_openai: Optional[str] = None
 #print("Modelo OpenAI em uso:", os.getenv("OPENAI_MODEL"))
 print("DEBUG: OPENAI_API_KEY env presente?", bool(os.getenv("OPENAI_API_KEY")))
 print("DEBUG: existe /etc/secrets/openai_api_key ?", os.path.exists("/etc/secrets/openai_api_key"))
+if os.path.exists("/etc/secrets/openai_api_key"):
+    print("DEBUG: secret file size:", os.path.getsize("/etc/secrets/openai_api_key"))
+
 
 
 def obter_cliente_openai():
