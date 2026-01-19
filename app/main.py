@@ -58,8 +58,8 @@ async def analisar(
     texto_limpo = preprocessar_texto(texto_bruto)
 
     resultado = analisar_email(
-        email_texto_bruto=texto_bruto,
-        email_texto_limpo=texto_limpo,
-        tom=tom_resposta,
-    )
+    texto_bruto,
+    texto_limpo,
+    tom_resposta,
+)
     return resultado
