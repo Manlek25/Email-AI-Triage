@@ -3,6 +3,7 @@ from pathlib import Path
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
+import os
 
 from app.pdf_reader import ler_pdf_bytes
 from app.preprocess import preprocessar_texto
@@ -24,7 +25,12 @@ def pagina_inicial():
 
 @app.get("/health")
 def health_check():
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "openai_key_present": bool(os.getenv("OPENAI_API_KEY")),
+        "openai_model": os.getenv("OPENAI_MODEL"),
+    }
+
 
 
 @app.post("/analyze")
