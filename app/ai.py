@@ -2,6 +2,7 @@ import os
 import json
 import re
 from typing import Dict, Any, List, Optional
+import openai
 
 # =========================================================
 # OpenAI client - com fallback automático
@@ -13,6 +14,8 @@ print("DEBUG: OPENAI_API_KEY env presente?", bool(os.getenv("OPENAI_API_KEY")))
 print("DEBUG: existe /etc/secrets/openai_api_key ?", os.path.exists("/etc/secrets/openai_api_key"))
 if os.path.exists("/etc/secrets/openai_api_key"):
     print("DEBUG: secret file size:", os.path.getsize("/etc/secrets/openai_api_key"))
+
+print("DEBUG: openai version:", getattr(openai, "__version__", "unknown"))
 
 
 
@@ -278,19 +281,28 @@ EMAIL:
     modelo = os.getenv("OPENAI_MODEL", "gpt-5-nano")
 
     try:
-        if modelo.startswith("gpt-5"):
+                # ✅ Tenta usar Responses API (quando disponível no SDK)
+        if modelo.startswith("gpt-5") and hasattr(cliente_openai, "responses"):
             resposta = cliente_openai.responses.create(
                 model=modelo,
-                input=prompt
+                input=prompt,
             )
-            conteudo = resposta.output_text
+            conteudo = getattr(resposta, "output_text", "") or ""
+
         else:
+            # ✅ Fallback de compatibilidade (SDK sem responses):
+            # usa chat.completions com um modelo compatível
+            modelo_chat = modelo
+            if modelo_chat.startswith("gpt-5"):
+                # gpt-5* pode não funcionar em chat.completions em SDKs antigos
+                modelo_chat = os.getenv("OPENAI_FALLBACK_CHAT_MODEL", "gpt-4o-mini")
+
             resposta = cliente_openai.chat.completions.create(
-                model=modelo,
+                model=modelo_chat,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.2,
             )
-            conteudo = resposta.choices[0].message.content or ""
+            conteudo = (resposta.choices[0].message.content or "")
 
         dados = extrair_json_seguro(conteudo)
 
