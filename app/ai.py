@@ -222,10 +222,7 @@ def gerar_resposta_fallback(
 # Função principal
 # =========================================================
 
-def analisar_email(
-    email_texto_bruto: str,
-    tom: str = "formal"
-) -> Dict[str, Any]:
+def analisar_email(email_texto_bruto: str, email_texto_limpo: str, tom: str = "formal") -> Dict[str, Any]:
 
     cliente_openai = obter_cliente_openai()
 
