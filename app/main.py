@@ -34,11 +34,6 @@ def health_check():
         "status": "ok",
         "openai_configured": (has_env_key or has_secret_key),
         "openai_model": obter_modelo_openai(),
-        "key_source": (
-            "env"
-            if has_env_key
-            else ("secret_file" if has_secret_key else None)
-        ),
     }  
 
 
