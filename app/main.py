@@ -29,8 +29,7 @@ def health_check():
         "status": "ok",
         "openai_key_present": bool(os.getenv("OPENAI_API_KEY")),
         "openai_model": os.getenv("OPENAI_MODEL"),
-    }
-
+    }   
 
 
 @app.post("/analyze")
