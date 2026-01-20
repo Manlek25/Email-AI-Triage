@@ -63,3 +63,7 @@ Nesses casos, a **primeira requisição pode levar alguns segundos** para respon
 Após esse tempo inicial, o funcionamento ocorre normalmente.
 
 Essa decisão foi tomada para viabilizar o deploy sem custos, mantendo a aplicação acessível para demonstração e avaliação.
+
+## 🌐 Link do site
+
+https://email-ai-triage.onrender.com
