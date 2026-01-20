@@ -53,3 +53,13 @@ A interface foi mantida simples e objetiva:
 - Resultado claro e imediato
 
 O foco foi facilitar o uso por **usuários não técnicos**.
+
+## 🌐 Observação sobre o Deploy
+
+Este projeto está hospedado utilizando um serviço em **free tier**.  
+Por esse motivo, após um período sem acessos, o servidor pode entrar em modo de economia de recursos (*sleep*).
+
+Nesses casos, a **primeira requisição pode levar alguns segundos** para responder enquanto o serviço é reativado.  
+Após esse tempo inicial, o funcionamento ocorre normalmente.
+
+Essa decisão foi tomada para viabilizar o deploy sem custos, mantendo a aplicação acessível para demonstração e avaliação.
